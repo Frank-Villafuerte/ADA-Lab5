@@ -63,6 +63,6 @@ void PriorityQueue::SiftDown(int actualIdx)
 void PriorityQueue::Print()
 {
 	for (Path e : mHeap)
-		cout << e.weight << " ";
+		cout << (e.weight==INFINITE?0:e.weight) << " ";
 	cout << endl;
 }

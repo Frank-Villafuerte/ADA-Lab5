@@ -3,35 +3,37 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
-AdjList::AdjList(int theVertexNum)
+AdjList::AdjList(int theVertexNum, bool isDirected_)
 {
     mVertexNum = theVertexNum;
     vector<Edge> vertexConn;
     mList.resize(theVertexNum, vertexConn);//iniciar vectores vacios
+    isDirected = isDirected_;
 }
-
-bool AdjList::AddEdge(int theVertex1, int theVertex2, int theWeight)
+int AdjList::GetVertexNum()
 {
-    if (theVertex1 == theVertex2)
+    return mVertexNum;
+}
+bool AdjList::AddEdge(Edge theEdge)
+{
+    if (theEdge.v == theEdge.w)
     {
         cout << "[ERR] AdjList.AddEdge: Vértice autoconectado" << endl;
         return false;
     }
-    if (theVertex1 >= mVertexNum || theVertex2 >= mVertexNum)
+    if (theEdge.v >= mVertexNum || theEdge.w >= mVertexNum)
     {
         cout << "[ERR] AdjList.AddEdge: Fuera de rango" << endl;
         return false;
     }
-    Edge newEdge = { theVertex1,theVertex2,theWeight };
-    if (find(mList[theVertex1].begin(), mList[theVertex1].end(),newEdge )!=mList[theVertex1].end())
+    if (find(mList[theEdge.v].begin(), mList[theEdge.v].end(), theEdge)!=mList[theEdge.v].end())
     {
         cout << "[ERR] AdjList.AddEdge: Arista ya existe" << endl;
         return false;
     }
-    mList[theVertex1].push_back({theVertex1,theVertex2,theWeight});
-    mList[theVertex2].push_back({ theVertex2,theVertex1,theWeight });
-    //agregar ambos al ser no dirigidos
-    
+    mList[theEdge.v].push_back(theEdge);
+    if (!isDirected)
+        mList[theEdge.w].push_back(theEdge.Mirror());
     return true;
 }
 void AdjList::GetEdgesByIdx(int vertexIdx, std::vector<Edge>& outputEdgeList)
@@ -42,7 +44,7 @@ void AdjList::GetEdgesByIdx(int vertexIdx, std::vector<Edge>& outputEdgeList)
 void AdjList::LoadEdges(std::vector<Edge> theEdges)
 {
     for (int i = 0;i < theEdges.size();i++)
-        AddEdge(theEdges[i].v, theEdges[i].w, theEdges[i].weight);
+        AddEdge(theEdges[i]);
 }
 void AdjList::Print()
 {
@@ -62,7 +64,7 @@ void AdjList::Export(std::string filename)
     int edgeCount = 0;
     for (int i = 0;i < mVertexNum;i++)
         for (Edge e : mList[i])
-            if (e.w > i)
+            if (e.w > i||isDirected)
             {
                 if (mVertexNum < 27)
                     lines.push_back(string(1, (char)(e.v + 65)) + " " + string(1, (char)(e.w + 65)) + " " + to_string(e.weight) + "\n");

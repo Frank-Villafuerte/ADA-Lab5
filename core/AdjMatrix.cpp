@@ -4,64 +4,68 @@
 
 using namespace std;
 
-AdjMatrix::AdjMatrix(int theVertexNum)
+AdjMatrix::AdjMatrix(int theVertexNum,bool isDirected_)
 {
     mVertexNum = theVertexNum;
     vector<int> row;
-    row.resize(theVertexNum,-1);
+    row.resize(theVertexNum,INFINITE);
     mMatrix.resize(theVertexNum, row);
+    isDirected = isDirected_;
 }
 int AdjMatrix::GetEdgeWeight(int theVertex1, int theVertex2)
 {
     if (theVertex1 >= mVertexNum || theVertex2 >= mVertexNum)
     {
         cout << "[ERR] AdjMatrix.GetEdge: Fuera de rango" << endl;
-        return -1;
+        return INFINITE;
     }
     return mMatrix[theVertex1][theVertex2];
 }
 
-bool AdjMatrix::AddEdge(int theVertex1, int theVertex2, int theWeight)
+bool AdjMatrix::AddEdge(Edge theEdge)
 {
-    if (theVertex1 == theVertex2)
+    if (theEdge.v == theEdge.w)
     {
         cout << "[ERR] AdjMatrix.AddEdge: Vértice autoconectado" << endl;
         return false;
     }
-    if (theVertex1 >= mVertexNum || theVertex2 >= mVertexNum)
+    if (theEdge.v >= mVertexNum || theEdge.w >= mVertexNum)
     {
         cout << "[ERR] AdjMatrix.AddEdge: Fuera de rango" << endl;
         return false;
     }
-    if (mMatrix[theVertex1][theVertex2] != -1)
+    if (mMatrix[theEdge.v][theEdge.w] != INFINITE)
     {
         cout << "[ERR] AdjMatrix.AddEdge: Arista ya existe" << endl;
         return false;
     }
-    //agregar ambos al ser no dirigidos
-    mMatrix[theVertex1][theVertex2] = theWeight;
-    mMatrix[theVertex2][theVertex1] = theWeight;
+    
+    mMatrix[theEdge.v][theEdge.w] = theEdge.weight;
+    if(!isDirected)
+        mMatrix[theEdge.w][theEdge.v] = theEdge.weight;
     return true;
 }
 void AdjMatrix::GetUnconnectedIdx(std::vector<int>& theOutUnconnected)
 {
     theOutUnconnected.clear();
-    for(int i=0;i<mVertexNum;i++)
-        for (int j = 0;j < i;j++)
+    
+    for (int i = 0;i < mVertexNum;i++)
+    {
+        int colMax = isDirected ? mVertexNum : i;
+        for (int j = 0;j < colMax;j++)
         {
-            if (i != j && mMatrix[i][j] == -1)
+            if (i != j && mMatrix[i][j] == INFINITE)
             {
-                theOutUnconnected.push_back(i*mVertexNum+j);
+                theOutUnconnected.push_back(i * mVertexNum + j);
             }
         }
+    }
 }
 
 void AdjMatrix::LoadEdges(std::vector<Edge> theEdges)
 {
-    for (int i = 0;i < theEdges.size();i++)
-    {
-        AddEdge(theEdges[i].v, theEdges[i].w, theEdges[i].weight);
-    }
+    for (Edge e:theEdges)
+        AddEdge(e);
 }
 
 void AdjMatrix::Print()
@@ -70,7 +74,9 @@ void AdjMatrix::Print()
     {
         for (int j = 0;j < mVertexNum;j++)
         {
-            cout << mMatrix[i][j] << " ";
+            int weight = mMatrix[i][j];
+            if (weight == INFINITE) weight = 0;
+            cout << weight << " ";
         }
         cout << endl;
     }
@@ -86,7 +92,7 @@ void AdjMatrix::Export(string theFilename)
         for (int j = 0;j < i;j++)
         {
             int weight = mMatrix[i][j];
-            if (weight != -1)
+            if (weight != INFINITE)
             {
                 if(mVertexNum<27)
                     lines.push_back ( string(1,(char)(i + 65)) + " " +string(1,(char)(j + 65)) +" "+to_string(weight)+"\n");

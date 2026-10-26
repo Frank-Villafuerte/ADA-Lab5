@@ -9,10 +9,11 @@ class AdjMatrix
 private:
     std::vector<std::vector<int>> mMatrix;
     int mVertexNum;
+    bool isDirected;
 public:
-    AdjMatrix(int theVertexNum);
+    AdjMatrix(int theVertexNum,bool isDirected_=false);
     int GetEdgeWeight(int theVertex1, int theVertex2);
-    bool AddEdge(int theVertex1, int theVertex2, int theWeight);
+    bool AddEdge(Edge theEdge);
     void GetUnconnectedIdx(std::vector<int>& theOutUnconnected);
     void LoadEdges(std::vector<Edge> theEdges);
     void Print();

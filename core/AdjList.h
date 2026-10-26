@@ -7,9 +7,11 @@ class AdjList
 private:
 	std::vector<std::vector<Edge>> mList;
 	int mVertexNum;
+	bool isDirected;
 public:
-	AdjList(int theVertexNum);
-	bool AddEdge(int theVertex1, int theVertex2, int theWeight);
+	AdjList(int theVertexNum,bool isDirected_=false);
+	int GetVertexNum();
+	bool AddEdge(Edge theEdge);
 	void GetEdgesByIdx(int vertexIdx, std::vector<Edge>& outputEdgeList);
 	void LoadEdges(std::vector<Edge> theEdges);
 	void Print();

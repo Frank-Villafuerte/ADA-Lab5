@@ -12,6 +12,10 @@ AdjMatrix::AdjMatrix(int theVertexNum,bool isDirected_)
     mMatrix.resize(theVertexNum, row);
     isDirected = isDirected_;
 }
+int AdjMatrix::GetVertexNum()
+{
+    return mVertexNum;
+}
 int AdjMatrix::GetEdgeWeight(int theVertex1, int theVertex2)
 {
     if (theVertex1 >= mVertexNum || theVertex2 >= mVertexNum)
@@ -39,9 +43,20 @@ bool AdjMatrix::AddEdge(Edge theEdge)
         cout << "[ERR] AdjMatrix.AddEdge: Arista ya existe" << endl;
         return false;
     }
-    
     mMatrix[theEdge.v][theEdge.w] = theEdge.weight;
     if(!isDirected)
+        mMatrix[theEdge.w][theEdge.v] = theEdge.weight;
+    return true;
+}
+bool AdjMatrix::SetEdge(Edge theEdge)
+{
+    if (theEdge.v >= mVertexNum || theEdge.w >= mVertexNum)
+    {
+        cout << "[ERR] AdjMatrix.AddEdge: Fuera de rango" << endl;
+        return false;
+    }
+    mMatrix[theEdge.v][theEdge.w] = theEdge.weight;
+    if (!isDirected)
         mMatrix[theEdge.w][theEdge.v] = theEdge.weight;
     return true;
 }
@@ -74,9 +89,7 @@ void AdjMatrix::Print()
     {
         for (int j = 0;j < mVertexNum;j++)
         {
-            int weight = mMatrix[i][j];
-            if (weight == INFINITE) weight = 0;
-            cout << weight << " ";
+            cout << (mMatrix[i][j] == INFINITE ? "INF" :to_string(mMatrix[i][j])) << ",";
         }
         cout << endl;
     }
@@ -89,18 +102,22 @@ void AdjMatrix::Export(string theFilename)
     lines.push_back(to_string(mVertexNum)+" ");
     int edgeCount=0;
     for (int i = 0;i < mVertexNum;i++)
-        for (int j = 0;j < i;j++)
+    {
+        int maxCol = isDirected ? mVertexNum : i;
+        for (int j = 0;j < maxCol;j++)
         {
             int weight = mMatrix[i][j];
             if (weight != INFINITE)
             {
-                if(mVertexNum<27)
-                    lines.push_back ( string(1,(char)(i + 65)) + " " +string(1,(char)(j + 65)) +" "+to_string(weight)+"\n");
+
+                if (mVertexNum < 27)
+                    lines.push_back(string(1, (char)(i + 65)) + " " + string(1, (char)(j + 65)) + " " + to_string(weight) + "\n");
                 else
                     lines.push_back(to_string(i) + " " + to_string(j) + " " + to_string(weight) + "\n");
                 edgeCount++;
             }
         }
+    }
     lines[0] += to_string(edgeCount)+"\n";
     if (file.is_open()) {
 

@@ -12,8 +12,10 @@ private:
     bool isDirected;
 public:
     AdjMatrix(int theVertexNum,bool isDirected_=false);
+    int GetVertexNum();
     int GetEdgeWeight(int theVertex1, int theVertex2);
     bool AddEdge(Edge theEdge);
+    bool SetEdge(Edge theEdge);
     void GetUnconnectedIdx(std::vector<int>& theOutUnconnected);
     void LoadEdges(std::vector<Edge> theEdges);
     void Print();

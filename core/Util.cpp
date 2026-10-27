@@ -27,6 +27,7 @@ void Util::CreateRandomGraph(GraphData graphData,Range weightRange, vector<Edge>
 		cout << "[ERR] Util.creategraph: No hay suficientes aristes para un grafo conexo";
 		return;
 	}
+
 	vector<int> list;//lista de vertices
 	for (int i = 0;i < graphData.vertexNum;i++)
 	{
@@ -39,12 +40,8 @@ void Util::CreateRandomGraph(GraphData graphData,Range weightRange, vector<Edge>
 	mt19937 generator(device());
 	uniform_int_distribution<> distrW(weightRange.min,weightRange.max);
 	uniform_int_distribution<> distrE(0, graphData.vertexNum-1);
-	for (int i : list)
-		cout << (char)(i+65) << " ";
-	cout << endl;
 	for (int i = 0;i < list.size();i++)
 		tempMatrix.AddEdge(Edge(list[i], list[(i + 1) % list.size()], distrW(generator)));
-	
 	vector<int> unconnectedIdx;
 	tempMatrix.GetUnconnectedIdx(unconnectedIdx);
 	seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -63,7 +60,7 @@ void Util::CreateRandomGraph(GraphData graphData,Range weightRange, vector<Edge>
 				outEdges.push_back({i,j,weight});
 		}
 	}
-	tempMatrix.Export("temp.txt");
+	//tempMatrix.Export("temp.txt");
 	
 }
 

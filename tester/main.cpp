@@ -34,10 +34,10 @@ void Dijkstra(AdjList inputList,int startVertex,vector<Edge>& output)
             queue.Enqueue(Path(e.w, e.weight+distances[e.v]));
         }
         visited[shortest.targetVertex] = true;
-        queue.Print();
-        for (int i : distances)
-            cout << (i == INFINITE ? -1 : i) << " ";
-        cout << endl;
+        //8queue.Print();
+        //for (int i : distances)
+          //  cout << (i == INFINITE ? -1 : i) << " ";
+        //cout << endl;
     }    
     
     output = prevEdge;
@@ -82,32 +82,85 @@ void FloydWarshall(AdjMatrix& matrix)
     }
                 
 }
+bool BellmanFord(vector<Edge> inputList,int vertexNum,int startVertex, vector<Edge>& output)
+{
+    vector<int> distances(vertexNum,INFINITE);
+    vector<Edge> prevEdge(vertexNum, Edge());
+    distances[startVertex] = 0;
+    prevEdge[startVertex] = Edge(startVertex,startVertex,0);
+    for (int i = 0;i < vertexNum-1;i++)
+        for (Edge e : inputList)
+        {
+            if (distances[e.w] > Plus(distances[e.v], e.weight))
+            {
+                distances[e.w] = Plus(distances[e.v], e.weight);
+                prevEdge[e.w] = e;
+            }
+        }
+    for (Edge e : inputList)
+        if (distances[e.w] > Plus(distances[e.v], e.weight))
+            return false;
+    output = prevEdge;
+    //for (Edge e : prevEdge)
+        //cout << "[" << e.v <<","<<e.w<<","<<e.weight << "] ";
+    return true;
+}
 int main()
 {
     //A,B,C,D,E,F,G
     //0,1,2,3,4,5,6
     //PriorityQueue queue;
-    vector<Edge> edges = { {0,3,5},{2,4,5},{3,5,6}, {0,1,7}, {1,4,7}, {1,2,8}, {4,5,8}, {1,3,9}, {4,6,9}, {5,6,11}, {3,4,15} };
+    vector<Edge> edges = { {0, 1, 6},   // A B 6
+    {0, 1, 3},   // A -> B
+    {0, 2, 8},   // A -> C
+    {0, 6, 1},   // A -> G
+    {1, 3, 2},   // B -> D
+    {2, 4, -3},  // C -> E
+    {2, 6, 2},   // C -> G
+    {3, 4, 7},   // D -> E
+    {3, 5, 9},   // D -> F
+    {4, 0, 4},   // E -> A
+    {4, 1, -2},  // E -> B
+    {4, 6, 6},   // E -> G
+    {5, 3, 5},   // F -> D
+    {5, 6, 2},   // F -> G
+    {6, 1, 6},   // G -> B
+    {6, 2, -1} };
     vector<Edge> edgesUnco = { {0,3,5},{2,4,5}, {0,1,7}, {1,4,7}, {1,2,8}, {1,3,9}, {5,6,11}, {3,4,15} };//disconexo
     //vector<Edge> edges = { {0,1,6} ,{0,2,1} ,{0,4,4} ,{1,2,4} ,{1,3,3} ,{2,3,2} ,{2,4,5} ,{3,5,3} ,{3,6,5} ,{4,5,3} ,{4,7,2} ,{4,8,5} ,{5,6,4} ,{5,7,2} ,{6,9,3} ,{7,8,2} ,{7,9,5} ,{8,9,4} };
-    GraphData graphData(6,20, true);
+    //GraphData graphData(6,20, true);
+    GraphData graphData(7, edges.size(), true);
     Range weightRange(1,10);
     AdjList list(graphData.vertexNum,graphData.isDirected);
     AdjMatrix matrix(graphData.vertexNum, graphData.isDirected);
-    Util::CreateRandomGraph(graphData,weightRange,edges);
-    cout << edges.size()<<endl;
-    list.LoadEdges(edges);
+    //Util::CreateRandomGraph(graphData,weightRange,edges);
     matrix.LoadEdges(edges);
-    matrix.Print();
+    //matrix.Print();
     matrix.Export("matrix.txt");
-    FloydWarshall(matrix);
-    matrix.Print();
+    vector<Edge> prevEdge;
+    if (!BellmanFord(edges, 7, 2, prevEdge))
+    {
+        cout << "ciclo negativo" << endl;
+    }
+    else
+        cout << "correcto" << endl;
+    for (int i = 0;i < prevEdge.size();i++)
+    {
+        Edge e = prevEdge[i];
+        cout << "[" << (char)(i + 65) << "] " << (char)(e.v + 65) << "," << (char)(e.w + 65) << "," << e.weight << endl;
+    }
+    //list.LoadEdges(edges);
+    //matrix.LoadEdges(edges);
+    //matrix.Print();
+    //matrix.Export("matrix.txt");
+    //FloydWarshall(matrix);
+    //matrix.Print();
     
     //list.Export("graph.txt");
     //list.Print();
-    /*vector<Edge> prevEdge;
-    Dijkstra(list,0,prevEdge);
-    for (int i = 0;i < prevEdge.size  ();i++)
+    //vector<Edge> prevEdge;
+    //Dijkstra(list,0,prevEdge);
+    /*for (int i = 0;i < prevEdge.size();i++)
     {
         Edge e = prevEdge[i];
         cout << "[" << (char)(i+65) << "] " << (char)(e.v+65)<<","<< (char)(e.w+65) << "," << e.weight << endl;

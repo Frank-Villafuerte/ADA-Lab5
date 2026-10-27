@@ -25,36 +25,29 @@ int main()
     //0,1,2,3,4,5,6
     //PriorityQueue queue;
     vector<Edge> edges = {    // A B 6
-    {0, 1, 3},   // A -> B
-    {0, 2, 8},   // A -> C
-    {0, 6, 1},   // A -> G
-    {1, 3, 2},
-    {1, 0, 6},// B -> D
-    {2, 4, -3},  // C -> E
-    {2, 6, 2},   // C -> G
-    {3, 4, 7},   // D -> E
-    {3, 5, 9},   // D -> F
-    {4, 0, 4},   // E -> A
-    {4, 1, -2},  // E -> B
-    {4, 6, 6},   // E -> G
-    {5, 3, 5},   // F -> D
-    {5, 6, 2},   // F -> G
-    {6, 1, 6},   // G -> B
-    {6, 2, -1} };
+    {2, 0, 5}, {2, 1, 1}, {1, 0, 1}, {0, 3, 1} };
     vector<Edge> edgesUnco = { {0,3,5},{2,4,5}, {0,1,7}, {1,4,7}, {1,2,8}, {1,3,9}, {5,6,11}, {3,4,15} };//disconexo
     //vector<Edge> edges = { {0,1,6} ,{0,2,1} ,{0,4,4} ,{1,2,4} ,{1,3,3} ,{2,3,2} ,{2,4,5} ,{3,5,3} ,{3,6,5} ,{4,5,3} ,{4,7,2} ,{4,8,5} ,{5,6,4} ,{5,7,2} ,{6,9,3} ,{7,8,2} ,{7,9,5} ,{8,9,4} };
     //GraphData graphData(6,20, true);
-    GraphData graphData(8, 15, true);
+    GraphData graphData(4, 4, false);
     Range weightRange(1,10);
     AdjList list(graphData.vertexNum,graphData.isDirected);
     AdjMatrix matrix(graphData.vertexNum, graphData.isDirected);
-    Util::CreateRandomGraph(graphData,weightRange,edges);
+    //Util::CreateRandomGraph(graphData,weightRange,edges);
     matrix.LoadEdges(edges);
     //matrix.Print();
     matrix.Export("matrix.txt");
+    list.LoadEdges(edges);
     vector<Edge> prevEdge;
-    
-    if (!ShortestPath::BellmanFord(edges, graphData.vertexNum, 2, prevEdge))
+    ShortestPath::Dijkstra(list, 2, prevEdge);
+    for (int i = 0;i < prevEdge.size();i++)//imprimir caminos
+    {
+        int totalWeight = 0;
+        PrintPath(prevEdge, i, totalWeight);
+        cout << " - Total: " << totalWeight;
+        cout << endl;
+    }
+    /*if (!ShortestPath::BellmanFord(edges, graphData.vertexNum, 2, prevEdge))
     {
         cout << "ciclo negativo" << endl;
     }
@@ -71,7 +64,7 @@ int main()
         PrintPath(prevEdge,i, totalWeight);
         cout << " - Total: " << totalWeight;
         cout << endl;
-    }
+    }*/
     //list.LoadEdges(edges);
     //matrix.LoadEdges(edges);
     //matrix.Print();

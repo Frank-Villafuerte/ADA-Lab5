@@ -1,6 +1,7 @@
 #pragma once
 #include "AdjList.h"
 #include "AdjMatrix.h"
+#include <vector>
 class ShortestPath
 {
 private:

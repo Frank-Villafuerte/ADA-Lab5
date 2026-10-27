@@ -1,5 +1,6 @@
 #include "ShortestPath.h"
 #include "PriorityQueue.h"
+#include <iostream>
 using namespace std;
 int ShortestPath::Min(int a, int b)
 {
@@ -26,9 +27,8 @@ void ShortestPath::Dijkstra(AdjList inputList, int startVertex, vector<Edge>& ou
     PriorityQueue queue;
     visited[startVertex] = true;
     distances[startVertex] = 0;
-    prevEdge[startVertex] = Edge(startVertex, startVertex,0);
+    prevEdge[startVertex] = Edge(startVertex, startVertex, 0);
     queue.Enqueue(Path(startVertex, 0));
-
     while (!queue.IsEmpty())
     {
         Path shortest = queue.Pop();
@@ -45,12 +45,7 @@ void ShortestPath::Dijkstra(AdjList inputList, int startVertex, vector<Edge>& ou
             queue.Enqueue(Path(e.w, e.weight + distances[e.v]));
         }
         visited[shortest.targetVertex] = true;
-        //8queue.Print();
-        //for (int i : distances)
-          //  cout << (i == INFINITE ? -1 : i) << " ";
-        //cout << endl;
     }
-
     output = prevEdge;
 }
 

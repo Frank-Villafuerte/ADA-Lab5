@@ -1,0 +1,97 @@
+#include "ShortestPath.h"
+#include "PriorityQueue.h"
+using namespace std;
+int ShortestPath::Min(int a, int b)
+{
+    if (a > b)
+    {
+        return b;
+    }
+    return a;
+}
+int ShortestPath::Plus(int a, int b)
+{
+    if (a == INFINITE || b == INFINITE)
+    {
+        return INFINITE;
+    }
+    return a + b;
+}
+void ShortestPath::Dijkstra(AdjList inputList, int startVertex, vector<Edge>& output)
+{
+    int vertexNum = inputList.GetVertexNum();
+    vector<bool> visited(vertexNum, false);
+    vector <int> distances(vertexNum, INFINITE);
+    vector <Edge> prevEdge(vertexNum, Edge());
+    PriorityQueue queue;
+    visited[startVertex] = true;
+    distances[startVertex] = 0;
+    prevEdge[startVertex] = Edge(startVertex, startVertex,0);
+    queue.Enqueue(Path(startVertex, 0));
+
+    while (!queue.IsEmpty())
+    {
+        Path shortest = queue.Pop();
+        vector<Edge> edgeList;
+        inputList.GetEdgesByIdx(shortest.targetVertex, edgeList);
+        for (Edge e : edgeList)
+        {
+            if (visited[e.w]) continue;
+            if (distances[e.w] > distances[e.v] + e.weight)
+            {
+                distances[e.w] = distances[e.v] + e.weight;
+                prevEdge[e.w] = e;
+            }
+            queue.Enqueue(Path(e.w, e.weight + distances[e.v]));
+        }
+        visited[shortest.targetVertex] = true;
+        //8queue.Print();
+        //for (int i : distances)
+          //  cout << (i == INFINITE ? -1 : i) << " ";
+        //cout << endl;
+    }
+
+    output = prevEdge;
+}
+
+void ShortestPath::FloydWarshall(AdjMatrix& matrix)
+{
+    //matrix = inputMatrix;
+
+    int vertexNum = matrix.GetVertexNum();
+    for (int i = 0;i < vertexNum;i++)
+    {
+        matrix.SetEdge(Edge(i, i, 0));
+    }
+    matrix.Print();
+    for (int k = 0;k < vertexNum;k++)
+    {
+        for (int i = 0;i < vertexNum;i++)
+            for (int j = 0;j < vertexNum;j++)
+                matrix.SetEdge(Edge(i, j, Min(matrix.GetEdgeWeight(i, j), Plus(matrix.GetEdgeWeight(i, k), matrix.GetEdgeWeight(k, j)))));
+    }
+
+}
+bool ShortestPath::BellmanFord(vector<Edge> inputList, int vertexNum, int startVertex, vector<Edge>& output)
+{
+    vector<int> distances(vertexNum, INFINITE);
+    vector<Edge> prevEdge(vertexNum, Edge());
+    distances[startVertex] = 0;
+    prevEdge[startVertex] = Edge(startVertex, startVertex, 0);
+    for (int i = 0;i < vertexNum - 1;i++)
+        for (Edge e : inputList)
+        {
+            if (distances[e.w] > Plus(distances[e.v], e.weight))
+            {
+                distances[e.w] = Plus(distances[e.v], e.weight);
+                prevEdge[e.w] = e;
+            }
+        }
+    for (Edge e : inputList)
+        if (distances[e.w] > Plus(distances[e.v], e.weight))
+            return false;
+    output = prevEdge;
+    //for (Edge e : prevEdge)
+        //cout << "[" << e.v <<","<<e.w<<","<<e.weight << "] ";
+    return true;
+}

@@ -30,19 +30,15 @@ void Util::CreateRandomGraph(GraphData graphData,Range weightRange, vector<Edge>
 	vector<int> list(graphData.vertexNum);//lista de vertices
 	for (int i = 0;i < graphData.vertexNum;i++)list[i]=i;
 	shuffle(list.begin(), list.end(), generator);
-
 	AdjMatrix tempMatrix(graphData.vertexNum, graphData.isDirected);//matriz temporal para validar aristas
 	uniform_int_distribution<> distrW(weightRange.min,weightRange.max);
 	for (int i = 0;i < list.size();i++)
 		tempMatrix.AddEdge(Edge(list[i], list[(i + 1) % list.size()], distrW(generator)));
-
 	vector<int> unconnectedIdx;
 	tempMatrix.GetUnconnectedIdx(unconnectedIdx);
 	shuffle(unconnectedIdx.begin(), unconnectedIdx.end(), generator);
 	for (int i = 0;i < graphData.edgeNum-list.size()&&i<unconnectedIdx.size();i++)
-	{
 		tempMatrix.AddEdge(Edge(unconnectedIdx[i] / graphData.vertexNum, unconnectedIdx[i] % graphData.vertexNum, distrW(generator)));
-	}
 	for (int i = 0;i < graphData.vertexNum;i++)
 	{
 		int maxCol = graphData.isDirected ? graphData.vertexNum : i;
@@ -52,8 +48,6 @@ void Util::CreateRandomGraph(GraphData graphData,Range weightRange, vector<Edge>
 			if (weight != INFINITE)
 				outEdges.push_back({i,j,weight});
 		}
-	}
-	//tempMatrix.Export("temp.txt");
-	
+	}	
 }
 

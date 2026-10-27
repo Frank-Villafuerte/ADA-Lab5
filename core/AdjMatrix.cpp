@@ -40,7 +40,7 @@ bool AdjMatrix::AddEdge(Edge theEdge)
     }
     if (mMatrix[theEdge.v][theEdge.w] != INFINITE)
     {
-        cout << "[ERR] AdjMatrix.AddEdge: Arista ya existe" << endl;
+        cout << "[ERR] AdjMatrix.AddEdge: Arista ya existe."<<theEdge.v<<"," << theEdge.w << endl;
         return false;
     }
     mMatrix[theEdge.v][theEdge.w] = theEdge.weight;

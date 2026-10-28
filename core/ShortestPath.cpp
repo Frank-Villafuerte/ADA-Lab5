@@ -51,21 +51,13 @@ void ShortestPath::Dijkstra(AdjList inputList, int startVertex, vector<Edge>& ou
 
 void ShortestPath::FloydWarshall(AdjMatrix& matrix)
 {
-    //matrix = inputMatrix;
-
     int vertexNum = matrix.GetVertexNum();
-    for (int i = 0;i < vertexNum;i++)
-    {
+    for (int i = 0;i < vertexNum;i++)//diagonal =0
         matrix.SetEdge(Edge(i, i, 0));
-    }
-    matrix.Print();
     for (int k = 0;k < vertexNum;k++)
-    {
         for (int i = 0;i < vertexNum;i++)
             for (int j = 0;j < vertexNum;j++)
                 matrix.SetEdge(Edge(i, j, Min(matrix.GetEdgeWeight(i, j), Plus(matrix.GetEdgeWeight(i, k), matrix.GetEdgeWeight(k, j)))));
-    }
-
 }
 bool ShortestPath::BellmanFord(vector<Edge> inputList, int vertexNum, int startVertex, vector<Edge>& output)
 {

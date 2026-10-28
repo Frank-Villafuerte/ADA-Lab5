@@ -78,7 +78,5 @@ bool ShortestPath::BellmanFord(vector<Edge> inputList, int vertexNum, int startV
         if (distances[e.w] > Plus(distances[e.v], e.weight))
             return false;
     output = prevEdge;
-    //for (Edge e : prevEdge)
-        //cout << "[" << e.v <<","<<e.w<<","<<e.weight << "] ";
     return true;
 }

@@ -25,15 +25,15 @@ void ShortestPath::Dijkstra(AdjList inputList, int startVertex, vector<Edge>& ou
     vector <int> distances(vertexNum, INFINITE);
     vector <Edge> prevEdge(vertexNum, Edge());
     PriorityQueue queue;
-    visited[startVertex] = true;
     distances[startVertex] = 0;
     prevEdge[startVertex] = Edge(startVertex, startVertex, 0);
     queue.Enqueue(Path(startVertex, 0));
     while (!queue.IsEmpty())
     {
         Path shortest = queue.Pop();
-        vector<Edge> edgeList;
-        inputList.GetEdgesByIdx(shortest.targetVertex, edgeList);
+        if (visited[shortest.targetVertex]) continue;
+        visited[shortest.targetVertex] = true;
+        const vector<Edge>& edgeList=inputList.GetEdgesByIdx(shortest.targetVertex);
         for (Edge e : edgeList)
         {
             if (visited[e.w]) continue;
@@ -41,10 +41,10 @@ void ShortestPath::Dijkstra(AdjList inputList, int startVertex, vector<Edge>& ou
             {
                 distances[e.w] = distances[e.v] + e.weight;
                 prevEdge[e.w] = e;
+                queue.Enqueue(Path(e.w, e.weight + distances[e.v]));
             }
-            queue.Enqueue(Path(e.w, e.weight + distances[e.v]));
+            
         }
-        visited[shortest.targetVertex] = true;
     }
     output = prevEdge;
 }

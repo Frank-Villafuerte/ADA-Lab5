@@ -40,6 +40,11 @@ void AdjList::GetEdgesByIdx(int vertexIdx, std::vector<Edge>& outputEdgeList)
 {
     outputEdgeList.clear();
     outputEdgeList= mList[vertexIdx];
+    //return mList[
+}
+const std::vector<Edge>& AdjList::GetEdgesByIdx(int vertexIdx) const
+{
+    return mList[vertexIdx];
 }
 void AdjList::LoadEdges(std::vector<Edge> theEdges)
 {

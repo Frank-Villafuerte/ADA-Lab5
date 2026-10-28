@@ -13,6 +13,7 @@ public:
 	int GetVertexNum();
 	bool AddEdge(Edge theEdge);
 	void GetEdgesByIdx(int vertexIdx, std::vector<Edge>& outputEdgeList);
+	const std::vector<Edge>& GetEdgesByIdx(int vertexIdx) const;
 	void LoadEdges(std::vector<Edge> theEdges);
 	void Print();
 	void Export(std::string filename);

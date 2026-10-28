@@ -4,6 +4,7 @@ add_subdirectory(core)
 add_subdirectory(dijkstra)
 add_subdirectory(floydwarshall)
 add_subdirectory(bellmanford)
+add_subdirectory(exec_time)
 
 add_subdirectory(tester)
 
